@@ -6,7 +6,6 @@ workflows:
       vars:
         APP_NAME: "WorkTracker"
         BUNDLE_ID: "com.yourcompany.worktracker"
-      flutter: false
     scripts:
       - name: Установка зависимостей
         script: |
@@ -18,9 +17,7 @@ workflows:
           python3 toolchain.py build kivymd
           python3 toolchain.py create $APP_NAME ios --package $BUNDLE_ID --icon ../icon.png
           cd $APP_NAME-ios
-          cp ../../main.py .  # или корректно перемести все файлы
-          python3 main.py  # можно проверить
-
+          cp ../../main.py .
       - name: Сборка .ipa
         script: |
           cd $APP_NAME-ios
@@ -30,7 +27,3 @@ workflows:
     artifacts:
       - $APP_NAME-ios/build/*.ipa
 
-    publishing:
-      email:
-        recipients:
-          - your-email@example.com
