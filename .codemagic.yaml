@@ -1,0 +1,36 @@
+workflows:
+  ios-kivy-build:
+    name: Kivy iOS Build
+    environment:
+      xcode: latest
+      vars:
+        APP_NAME: "WorkTracker"
+        BUNDLE_ID: "com.yourcompany.worktracker"
+      flutter: false
+    scripts:
+      - name: Установка зависимостей
+        script: |
+          pip3 install --upgrade pip
+          pip3 install kivy kivymd pyrebase4
+          git clone https://github.com/kivy/kivy-ios
+          cd kivy-ios
+          python3 toolchain.py build kivy
+          python3 toolchain.py build kivymd
+          python3 toolchain.py create $APP_NAME ios --package $BUNDLE_ID --icon ../icon.png
+          cd $APP_NAME-ios
+          cp ../../main.py .  # или корректно перемести все файлы
+          python3 main.py  # можно проверить
+
+      - name: Сборка .ipa
+        script: |
+          cd $APP_NAME-ios
+          xcodebuild -scheme $APP_NAME -configuration Release -destination generic/platform=iOS archive -archivePath $APP_NAME.xcarchive
+          xcodebuild -exportArchive -archivePath $APP_NAME.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath build
+
+    artifacts:
+      - $APP_NAME-ios/build/*.ipa
+
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com
