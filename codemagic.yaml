@@ -7,30 +7,24 @@ workflows:
         APP_NAME: "WorkTracker"
         BUNDLE_ID: "com.yourcompany.worktracker"
     scripts:
-  - name: Установка зависимостей
-    script: |
-      set -e  # остановить скрипт при первой ошибке
-      echo "Обновляю pip..."
-      pip3 install --upgrade pip
-
-      echo "Устанавливаю зависимости Python..."
-      pip3 install kivy kivymd pyrebase4
-
-      echo "Клонирую kivy-ios..."
-      git clone --depth 1 https://github.com/kivy/kivy-ios
-      cd kivy-ios
-
-      echo "Собираю kivy и kivymd..."
-      python3 toolchain.py build kivy
-      python3 toolchain.py build kivymd
-
-      echo "Создаю iOS проект..."
-      python3 toolchain.py create $APP_NAME ios --package $BUNDLE_ID --icon ../icon.png
-
-      cd $APP_NAME-ios
-      cp ../../main.py .
-      echo "Готово."
-
+      - name: Установка зависимостей
+        script: |
+          set -e
+          echo "Обновляю pip..."
+          pip3 install --upgrade pip
+          echo "Устанавливаю зависимости Python..."
+          pip3 install kivy kivymd pyrebase4
+          echo "Клонирую kivy-ios..."
+          git clone --depth 1 https://github.com/kivy/kivy-ios
+          cd kivy-ios
+          echo "Собираю kivy и kivymd..."
+          python3 toolchain.py build kivy
+          python3 toolchain.py build kivymd
+          echo "Создаю iOS проект..."
+          python3 toolchain.py create $APP_NAME ios --package $BUNDLE_ID --icon ../icon.png
+          cd $APP_NAME-ios
+          cp ../../main.py .
+          echo "Готово."
       - name: Сборка .ipa
         script: |
           cd $APP_NAME-ios
